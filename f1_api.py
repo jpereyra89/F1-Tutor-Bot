@@ -36,7 +36,7 @@ async def get_driver_standings() -> str:
     rows = standings[0]["DriverStandings"]
     season = standings[0]["season"]
     lines = [f"🏆 CAMPEONATO DE PILOTOS {season}\n"]
-    for r in rows[:10]:
+    for r in rows:
         d = r["Driver"]
         c = r["Constructors"][0]["name"] if r["Constructors"] else "—"
         lines.append(
