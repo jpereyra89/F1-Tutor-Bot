@@ -161,8 +161,9 @@ Este proyecto está bajo la licencia MIT. Podés usarlo, modificarlo y distribui
 
 ## 👤 Autor
 
-**Josep Pereyra**
+**Jose Pereyra**
 - GitHub: [@jpereyra89](https://github.com/jpereyra89)
+- Email: josepereyra89@gmail.com
 - Bot: [@f1tutor_bot](https://t.me/f1tutor_bot)
 
 ---
