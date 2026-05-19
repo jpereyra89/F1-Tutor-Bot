@@ -249,6 +249,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/lastrace — Resultado de la última carrera\n"
         "/nextrace — Próxima carrera\n"
         "/reglamento — Estado del reglamento indexado\n"
+        "/quiz — Poné a prueba tus conocimientos de F1\n"
         "/reset — Borrar historial de conversación\n\n"
         "¿Por dónde empezamos? 🏁"
     )
