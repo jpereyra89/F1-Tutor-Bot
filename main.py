@@ -12,17 +12,16 @@ import random
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 from groq import Groq
-from infraestructure.db import init_db, cargar_historial, guardar_historial, borrar_historial
-
-from infraestructure.f1_knowledge import F1_STATIC_KNOWLEDGE
-from infraestructure.f1_api import (
+from src.infraestructure.db import init_db, cargar_historial, guardar_historial, borrar_historial
+from src.infraestructure.f1_knowledge import F1_STATIC_KNOWLEDGE
+from src.infraestructure.f1_api import (
     get_relevant_f1_data,
     get_driver_standings,
     get_constructor_standings,
     get_last_race_results,
     get_next_race,
 )
-from infraestructure.f1_rag import buscar_reglamento, indexar_reglamento, reglamento_disponible
+from src.infraestructure.f1_rag import buscar_reglamento, indexar_reglamento, reglamento_disponible
 
 # --- Configuración ---
 TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
@@ -380,6 +379,7 @@ async def manejar_audio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         logging.error(f"Error en audio: {e}")
         await update.message.reply_text("⚠️ No pude procesar el audio. Intentá de nuevo.")
+
 
 # --- Main ---
 

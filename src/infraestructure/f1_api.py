@@ -7,6 +7,7 @@ Docs: https://api.jolpi.ca/ergast/
 import httpx
 import json
 from datetime import datetime
+from src.infraestructure.f1_weather import get_circuit_weather
 
 BASE_URL = "https://api.jolpi.ca/ergast/f1"
 TIMEOUT = 10  # segundos
@@ -109,10 +110,19 @@ async def get_next_race() -> str:
     race = proximas[0]
     c = race["Circuit"]
 
+    # <<< Extraemos coordenadas de Jolpica y llamamos a OpenWeather >>>
+    try:
+        lat = c["Location"]["lat"]
+        lon = c["Location"]["long"]  # Jolpica usa 'long' en sus JSON
+        clima_reporte = get_circuit_weather(lat, lon)
+    except Exception:
+        clima_reporte = "⚠️ No se pudieron cargar los datos del clima."
+
     # Buscar si tiene fecha de clasificación
     qualy = race.get("Qualifying", {})
     qualy_str = f"\n🕐 Clasificación: {qualy.get('date', '—')}" if qualy else ""
 
+    # Retornamos el texto con el bloque del clima sumado al final
     return (
         f"🗓️ PRÓXIMA CARRERA\n"
         f"📍 {race['raceName']}\n"
@@ -120,7 +130,8 @@ async def get_next_race() -> str:
         f"📌 {c['Location']['locality']}, {c['Location']['country']}\n"
         f"📅 Carrera: {race['date']}"
         f"{qualy_str}\n"
-        f"🔢 Ronda {race['round']} de {len(races)}"
+        f"🔢 Ronda {race['round']} de {len(races)}\n\n"
+        f"🌤️ ESTADO DEL CLIMA (Pronóstico):\n{clima_reporte}"
     )
 
 
