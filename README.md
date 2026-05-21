@@ -188,4 +188,4 @@ Este proyecto está bajo la licencia MIT. Podés usarlo, modificarlo y distribui
 
 ---
 
-*Desarrollado con ❤️ y mucha pasión por la F1 🏁*
+*Desarrollado con ❤️ y mucha pasión por la F1 🏎️💨🏁*
