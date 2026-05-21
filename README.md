@@ -182,8 +182,10 @@ El proyecto cuenta con una suite de pruebas unitarias automatizadas utilizando *
 
 Para ejecutar los tests en tu entorno local, simplemente corré el siguiente comando en la raíz del proyecto:
 
-```bash
+```
+bash
 python -m pytest
+```
 
 ---
 
