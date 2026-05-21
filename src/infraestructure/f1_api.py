@@ -195,7 +195,8 @@ async def get_relevant_f1_data(user_message: str) -> str:
     if any(w in msg for w in ["última carrera", "último gp", "resultado", "ganó", "ganador"]):
         results.append(await get_last_race_results())
 
-    if any(w in msg for w in ["próxima", "siguiente", "cuándo", "próximo gp", "calendario"]):
+    # <<< MODIFICADO: Ahora también se activa si el usuario pregunta por el clima o lluvia >>>
+    if any(w in msg for w in ["próxima", "siguiente", "cuándo", "próximo gp", "calendario", "clima", "tiempo", "lluvia", "llover"]):
         results.append(await get_next_race())
 
     if any(w in msg for w in ["temporada", "ganadores", "victorias"]) and "resultado" not in msg:
