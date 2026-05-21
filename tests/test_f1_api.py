@@ -1,5 +1,5 @@
 import pytest
-from src.infraestructure.f1_api import convert_utc_to_local
+from src.infrastructure.f1_api import convert_utc_to_local
 
 def test_convert_utc_to_local_normal():
     """Prueba una conversión normal de tarde (18:00 UTC -> 15:00 ARG)."""
