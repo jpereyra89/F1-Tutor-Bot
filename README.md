@@ -176,6 +176,17 @@ F1-Tutor-Bot/
 
 ---
 
+## 🧪 Pruebas Automatizadas
+
+El proyecto cuenta con una suite de pruebas unitarias automatizadas utilizando **Pytest** para garantizar que la lógica crítica (como la conversión de horarios de la F1 a zona local) funcione de manera correcta y no sufra regresiones.
+
+Para ejecutar los tests en tu entorno local, simplemente corré el siguiente comando en la raíz del proyecto:
+
+```bash
+python -m pytest
+
+---
+
 ## 📄 Licencia
 
 Este proyecto está bajo la licencia MIT. Podés usarlo, modificarlo y distribuirlo libremente.
