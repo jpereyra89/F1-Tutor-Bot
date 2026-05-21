@@ -125,15 +125,20 @@ La primera vez el bot va a descargar e indexar el reglamento oficial de la FIA a
 ```
 F1-Tutor-Bot/
 │
-├── bot.py              # Archivo principal — handlers y lógica del bot
-├── f1_knowledge.py     # Base de conocimiento estática de F1 2026
+├── main.py                 # Archivo principal — handlers y lógica del bot de Telegram
+├── .gitignore              # Archivos y carpetas ignorados por Git
+│
+└── infraestructure/        # Infraestructura, servicios y base de conocimiento
+├── db.py               # Gestión del historial de usuarios en SQLite
 ├── f1_api.py           # Cliente para la API de F1 en vivo (Jolpica)
-├── f1_rag.py           # Sistema RAG para el reglamento oficial FIA
-├── db.py               # Gestión del historial en SQLite
+├── f1_knowledge.py     # Base de conocimiento estática de F1 2026
+├── f1_rag.py           # Sistema RAG para el reglamento oficial de la FIA
 ├── requirements.txt    # Dependencias del proyecto
-├── Procfile            # Configuración para deploy (Railway/Heroku)
-├── .env                # Variables de entorno (no incluido en el repo)
-└── .gitignore          # Archivos ignorados por Git
+│
+└── reglamento_pdfs/    # Documentos oficiales de la FIA en PDF utilizados por el RAG
+├── sporting.pdf
+├── sporting_backup.pdf
+└── technical.pdf
 ```
 
 ---
