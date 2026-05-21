@@ -77,6 +77,7 @@ Desarrollado íntegramente en **Python**, sin licencias pagas.
 - [ffmpeg](https://ffmpeg.org/) instalado en el sistema
 - Cuenta en [Telegram](https://telegram.org/)
 - Cuenta en [Groq](https://console.groq.com/) (gratuita)
+- Cuenta en [OpenWeather](https://openweathermap.org/) (gratuita)
 
 ### Pasos
 
@@ -108,10 +109,12 @@ Creá un archivo `.env` en la raíz del proyecto:
 ```
 TELEGRAM_TOKEN=tu_token_de_botfather
 GROQ_API_KEY=tu_api_key_de_groq
+OPENWEATHER_API_KEY=tu_api_key_de_openweather
 ```
 
 - **TELEGRAM_TOKEN**: Obtenerlo hablando con [@BotFather](https://t.me/BotFather) en Telegram
 - **GROQ_API_KEY**: Obtenerlo en [console.groq.com](https://console.groq.com) (gratis)
+- **OPENWEATHER_API_KEY: Obtenerlo en [openweather.org](https://openweathermap.org/) (gratis)
 
 **5. Ejecutar el bot**
 ```bash
