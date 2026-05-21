@@ -26,6 +26,7 @@ Desarrollado íntegramente en **Python**, sin licencias pagas.
 |---------|-------------|
 | 🤖 **IA conversacional** | Responde cualquier pregunta sobre F1 con Groq + Llama 3.3 70B |
 | 📡 **Datos en vivo** | Clasificaciones, resultados y próximas carreras via Jolpica API |
+| 🌤️ **Clima en carrera** | Pronóstico meteorológico en tiempo real para los circuitos usando OpenWeather |
 | 📚 **Reglamento FIA 2026** | 2490 fragmentos del reglamento oficial indexados con RAG (ChromaDB) |
 | 🧠 **Base de conocimiento** | Circuitos, pilotos, escuderías y glosario técnico de la temporada 2026 |
 | 🎙️ **Mensajes de voz** | Transcripción automática con Whisper via Groq |
@@ -63,6 +64,7 @@ Desarrollado íntegramente en **Python**, sin licencias pagas.
 | ChromaDB | Base de datos vectorial (RAG) |
 | sentence-transformers | Embeddings para búsqueda semántica |
 | Jolpica API | Datos en vivo de F1 (sin API key) |
+| OpenWeather API | Datos meteorológicos en tiempo real para los circuitos |
 | SQLite | Historial de conversaciones |
 | python-dotenv | Gestión de variables de entorno |
 
@@ -134,6 +136,7 @@ F1-Tutor-Bot/
 └── infraestructure/    # Infraestructura, servicios y base de conocimiento
 ├── db.py           # Gestión del historial de usuarios en SQLite
 ├── f1_api.py       # Cliente para la API de F1 en vivo (Jolpica)
+├── f1_weather.py   # Conexión con OpenWeather API para datos climáticos en carrera
 ├── f1_knowledge.py # Base de conocimiento estática de F1 2026
 ├── f1_rag.py       # Sistema RAG para el reglamento oficial de la FIA
 │
@@ -158,6 +161,12 @@ F1-Tutor-Bot/
 2. Creá una cuenta gratuita
 3. En "API Keys" → "Create API Key"
 4. Copiá la key (empieza con `gsk_...`)
+
+### OpenWeather API Key
+1. Entrá a [openweathermap.org](https://openweathermap.org/) y registrate para crear una cuenta gratuita
+2. Una vez dentro de tu perfil, andá a la pestaña **"API keys"**
+3. En el panel derecho, ponle un nombre a tu key (por ejemplo: `f1-bot`) y hacé clic en **"Generate"**
+4. Copiá el código alfanumérico generado
 
 ---
 
