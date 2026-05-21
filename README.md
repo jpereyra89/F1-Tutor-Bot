@@ -135,9 +135,11 @@ La primera vez el bot va a descargar e indexar el reglamento oficial de la FIA a
 F1-Tutor-Bot/
 │
 ├── main.py                 # Archivo principal — handlers y lógica del bot de Telegram
-├── ver_metricas.py         # Auditar consultas y analizar estadísticas
 ├── requirements.txt        # Dependencias del proyecto
 ├── .gitignore              # Archivos y carpetas ignorados por Git
+│
+├── scripts/                # Scripts utilitarios y herramientas de mantenimiento local
+│   └── ver_metricas.py     # Script para auditar consultas y analizar estadísticas
 │
 ├── tests/                  # Pruebas automatizadas del sistema
 │   └── test_f1_api.py      # Tests unitarios con Pytest para el conversor de horarios
