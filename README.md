@@ -137,19 +137,22 @@ F1-Tutor-Bot/
 ├── requirements.txt        # Dependencias del proyecto
 ├── .gitignore              # Archivos y carpetas ignorados por Git
 │
+├── tests/                  # Pruebas automatizadas del sistema
+│   └── test_f1_api.py      # Tests unitarios con Pytest para el conversor de horarios
+│
 └── src/                    # Código fuente y soporte del proyecto
-│
-└── infraestructure/    # Infraestructura, servicios y base de conocimiento
-├── db.py           # Gestión del historial de usuarios en SQLite
-├── f1_api.py       # Cliente para la API de F1 en vivo (Jolpica)
-├── f1_weather.py   # Conexión con OpenWeather API para datos climáticos en carrera
-├── f1_knowledge.py # Base de conocimiento estática de F1 2026
-├── f1_rag.py       # Sistema RAG para el reglamento oficial de la FIA
-│
-└── reglamento_pdfs/ # Documentos oficiales de la FIA en PDF utilizados por el RAG
-├── sporting.pdf
-├── sporting_backup.pdf
-└── technical.pdf
+    │
+    ├── infraestructure/    # Infraestructura, servicios y base de conocimiento
+    │   ├── db.py           # Gestión del historial de usuarios en SQLite
+    │   ├── f1_api.py       # Cliente para la API de F1 en vivo (Jolpica)
+    │   ├── f1_weather.py   # Conexión con OpenWeather API para datos climáticos en carrera
+    │   ├── f1_knowledge.py # Base de conocimiento estática de F1 2026
+    │   └── f1_rag.py       # Sistema RAG para el reglamento oficial de la FIA
+    │
+    └── reglamento_pdfs/    # Documentos oficiales de la FIA en PDF utilizados por el RAG
+        ├── sporting.pdf
+        ├── sporting_backup.pdf
+        └── technical.pdf
 
 ```
 
