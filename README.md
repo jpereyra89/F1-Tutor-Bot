@@ -35,6 +35,7 @@ Desarrollado íntegramente en **Python**, sin licencias pagas.
 | 🎙️ **Mensajes de voz** | Transcripción automática con Whisper via Groq |
 | 💾 **Historial persistente** | Recuerda las conversaciones anteriores de cada usuario (SQLite) |
 | 🎯 **Quiz de F1** | Preguntas en 3 niveles: Fácil, Medio y Difícil |
+| 📊 **Auditoría y Métricas** | Registro local de consultas en SQLite para análisis de estadísticas y uso |
 
 ---
 
@@ -68,7 +69,7 @@ Desarrollado íntegramente en **Python**, sin licencias pagas.
 | sentence-transformers | Embeddings para búsqueda semántica |
 | Jolpica API | Datos en vivo de F1 (sin API key) |
 | OpenWeather API | Datos meteorológicos en tiempo real para los circuitos |
-| SQLite | Historial de conversaciones |
+| SQLite | Historial de conversaciones, auditoría y métricas locales |
 | python-dotenv | Gestión de variables de entorno |
 
 ---
@@ -134,6 +135,7 @@ La primera vez el bot va a descargar e indexar el reglamento oficial de la FIA a
 F1-Tutor-Bot/
 │
 ├── main.py                 # Archivo principal — handlers y lógica del bot de Telegram
+├── ver_metricas.py         # Auditar consultas y analizar estadísticas
 ├── requirements.txt        # Dependencias del proyecto
 ├── .gitignore              # Archivos y carpetas ignorados por Git
 │
