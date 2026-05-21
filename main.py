@@ -12,16 +12,17 @@ import random
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 from groq import Groq
-from src.infraestructure.db import init_db, cargar_historial, guardar_historial, borrar_historial
-from src.infraestructure.f1_knowledge import F1_STATIC_KNOWLEDGE
-from src.infraestructure.f1_api import (
+from src.infrastructure.db import init_db, cargar_historial, guardar_historial, borrar_historial
+from src.infrastructure.f1_knowledge import F1_STATIC_KNOWLEDGE
+from src.infrastructure.db import cargar_historial, guardar_historial, registrar_consulta
+from src.infrastructure.f1_api import (
     get_relevant_f1_data,
     get_driver_standings,
     get_constructor_standings,
     get_last_race_results,
     get_next_race,
 )
-from src.infraestructure.f1_rag import buscar_reglamento, indexar_reglamento, reglamento_disponible
+from src.infrastructure.f1_rag import buscar_reglamento, indexar_reglamento, reglamento_disponible
 
 # --- Configuración ---
 TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
@@ -323,39 +324,65 @@ async def cmd_dificil(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def manejar_mensaje(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
+    username = update.effective_user.username  # Guardamos el alias de Telegram
     texto   = update.message.text
+    
     await context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+    
     try:
+        # Caso 1: El usuario está respondiendo un Quiz
         if user_id in quiz_estado:
             resultado = responder_quiz(user_id, texto)
+            
+            # Registramos la interacción del Quiz
+            registrar_consulta(
+                user_id=user_id,
+                username=username,
+                mensaje_usuario=texto,
+                tipo_respuesta="quiz_respuesta"
+            )
+            
             await update.message.reply_text(resultado)
             return
 
+        # Caso 2: Consulta general al bot (IA, RAG, Clima, Horarios)
         respuesta = await generar_respuesta(user_id, texto)
+        
+        # Registramos la consulta general
+        registrar_consulta(
+            user_id=user_id,
+            username=username,
+            mensaje_usuario=texto,
+            tipo_respuesta="consulta_general"
+        )
+
         frases_prohibidas = [
-    "según los datos proporcionados",
-    "según los datos en vivo",
-    "según la información proporcionada",
-    "según mi conocimiento general",
-    "en los fragmentos proporcionados",
-    "en las páginas proporcionadas",
-    "no se menciona en los fragmentos",
-    "no hay información en los fragmentos",
-    "la información proporcionada",
-    "en el contexto proporcionado",
-    "según el contexto",
-    "base de conocimiento proporcionada",
-    "en las páginas que se mencionan",
-    "en el texto proporcionado",
-    "no se menciona en el texto",
-    "no se menciona el número",
-]
+            "según los datos proporcionados",
+            "según los datos en vivo",
+            "según la información proporcionada",
+            "según mi conocimiento general",
+            "en los fragmentos proporcionados",
+            "en las páginas proporcionadas",
+            "no se menciona en los fragmentos",
+            "no hay información en los fragmentos",
+            "la información proporcionada",
+            "en el contexto proporcionado",
+            "según el contexto",
+            "base de conocimiento proporcionada",
+            "en las páginas que se mencionan",
+            "en el texto proporcionado",
+            "no se menciona en el texto",
+            "no se menciona el número",
+        ]
+        
         for frase in frases_prohibidas:
             respuesta = respuesta.replace(frase, "")
         respuesta = respuesta.replace("Sin embargo, ,", "Sin embargo,")
         respuesta = respuesta.strip()
+        
         for i in range(0, len(respuesta), 4096):
             await update.message.reply_text(respuesta[i:i + 4096])
+            
     except Exception as e:
         logging.error(f"Error: {e}")
         await update.message.reply_text(
