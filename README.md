@@ -97,7 +97,7 @@ source venv/bin/activate
 
 **3. Instalar dependencias**
 ```bash
-pip install -r infraestructure/requirements.txt
+pip install -r requirements.txt
 ```
 
 **4. Configurar variables de entorno**
@@ -126,19 +126,22 @@ La primera vez el bot va a descargar e indexar el reglamento oficial de la FIA a
 F1-Tutor-Bot/
 │
 ├── main.py                 # Archivo principal — handlers y lógica del bot de Telegram
+├── requirements.txt        # Dependencias del proyecto
 ├── .gitignore              # Archivos y carpetas ignorados por Git
 │
-└── infraestructure/        # Infraestructura, servicios y base de conocimiento
-├── db.py               # Gestión del historial de usuarios en SQLite
-├── f1_api.py           # Cliente para la API de F1 en vivo (Jolpica)
-├── f1_knowledge.py     # Base de conocimiento estática de F1 2026
-├── f1_rag.py           # Sistema RAG para el reglamento oficial de la FIA
-├── requirements.txt    # Dependencias del proyecto
+└── src/                    # Código fuente y soporte del proyecto
 │
-└── reglamento_pdfs/    # Documentos oficiales de la FIA en PDF utilizados por el RAG
+└── infraestructure/    # Infraestructura, servicios y base de conocimiento
+├── db.py           # Gestión del historial de usuarios en SQLite
+├── f1_api.py       # Cliente para la API de F1 en vivo (Jolpica)
+├── f1_knowledge.py # Base de conocimiento estática de F1 2026
+├── f1_rag.py       # Sistema RAG para el reglamento oficial de la FIA
+│
+└── reglamento_pdfs/ # Documentos oficiales de la FIA en PDF utilizados por el RAG
 ├── sporting.pdf
 ├── sporting_backup.pdf
 └── technical.pdf
+
 ```
 
 ---
