@@ -118,7 +118,7 @@ OPENWEATHER_API_KEY=tu_api_key_de_openweather
 
 **5. Ejecutar el bot**
 ```bash
-python bot.py
+python main.py
 ```
 
 La primera vez el bot va a descargar e indexar el reglamento oficial de la FIA automáticamente. Esto puede tardar unos minutos.
