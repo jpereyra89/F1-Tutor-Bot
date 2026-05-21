@@ -5,6 +5,7 @@
 ![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)
 ![Telegram](https://img.shields.io/badge/Telegram-Bot-2CA5E0?logo=telegram)
 ![Groq](https://img.shields.io/badge/IA-Groq%20%2B%20Llama%203.3-orange)
+![OpenWeather](https://img.shields.io/badge/Clima-OpenWeather%20API-orange?logo=openweather&logoColor=white)
 ![License](https://img.shields.io/badge/Licencia-MIT-green)
 ![Costo](https://img.shields.io/badge/Costo-100%25%20Gratuito-brightgreen)
 
