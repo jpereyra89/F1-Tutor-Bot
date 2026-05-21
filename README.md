@@ -196,6 +196,21 @@ python -m pytest
 
 ---
 
+---
+
+## 📊 Monitoreo y Métricas (Uso Local)
+
+El proyecto incluye un sistema de auditoría silencioso que registra las consultas de los usuarios en la base de datos local para analizar qué temas generan mayor interés.
+
+Para consultar el estado actual del bot, la cantidad de mensajes recibidos y las últimas interacciones, ejecutá el script utilitario desde la raíz del proyecto:
+
+```
+bash
+python scripts/ver_metricas.py
+```
+
+---
+
 ## 📄 Licencia
 
 Este proyecto está bajo la licencia MIT. Podés usarlo, modificarlo y distribuirlo libremente.
