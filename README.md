@@ -114,7 +114,7 @@ OPENWEATHER_API_KEY=tu_api_key_de_openweather
 
 - **TELEGRAM_TOKEN**: Obtenerlo hablando con [@BotFather](https://t.me/BotFather) en Telegram
 - **GROQ_API_KEY**: Obtenerlo en [console.groq.com](https://console.groq.com) (gratis)
-- **OPENWEATHER_API_KEY: Obtenerlo en [openweather.org](https://openweathermap.org/) (gratis)
+- **OPENWEATHER_API_KEY**: Obtenerlo en [openweather.org](https://openweathermap.org/) (gratis)
 
 **5. Ejecutar el bot**
 ```bash
