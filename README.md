@@ -5,6 +5,7 @@
 ![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)
 ![Telegram](https://img.shields.io/badge/Telegram-Bot-2CA5E0?logo=telegram)
 ![Groq](https://img.shields.io/badge/IA-Groq%20%2B%20Llama%203.3-orange)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 ![OpenWeather](https://img.shields.io/badge/Clima-OpenWeather%20API-orange?logo=openweather&logoColor=white)
 ![ChromaDB](https://img.shields.io/badge/Vector%20DB-ChromaDB-black?logo=chroma&logoColor=white)
 ![Tests](https://img.shields.io/badge/Tests-Pytest%20--%20Passing-brightgreen?logo=pytest&logoColor=white)
