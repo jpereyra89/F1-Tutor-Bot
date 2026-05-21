@@ -7,7 +7,7 @@ Docs: https://api.jolpi.ca/ergast/
 import httpx
 import json
 from datetime import datetime, timedelta, timezone
-from src.infraestructure.f1_weather import get_circuit_weather
+from src.infrastructure.f1_weather import get_circuit_weather
 
 BASE_URL = "https://api.jolpi.ca/ergast/f1"
 TIMEOUT = 10  # segundos
