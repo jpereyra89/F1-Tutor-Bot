@@ -5,7 +5,6 @@ Capa de Infraestructura: Persistencia segura y parametrizada con placeholders.
 
 import sqlite3
 import json
-import os
 
 DB_PATH = "historial.db"
 
