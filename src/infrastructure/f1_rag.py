@@ -1,7 +1,7 @@
 """
 f1_rag.py
-Sistema RAG para buscar en el reglamento oficial de la FIA 2026.
-Descarga los PDFs, los indexa en ChromaDB y responde consultas.
+Sistema RAG para buscar en el reglamento oficial de la FIA 2026 y noticias dinámicas de actualidad.
+Descarga los PDFs, los indexa en ChromaDB y responde consultas dinámicas.
 """
 
 import os
@@ -80,7 +80,7 @@ def extraer_texto(ruta_pdf: str) -> list[dict]:
             texto = pagina.extract_text()
             if not texto or len(texto.strip()) < 50:
                 continue
-            # Dividir páginas largas en fragmentos de ~500 caracteres
+            # Dividir páginas largas en fragmentos de ~600 caracteres
             while len(texto) > 600:
                 corte = texto[:600].rfind(". ")
                 if corte == -1:
@@ -103,12 +103,12 @@ def extraer_texto(ruta_pdf: str) -> list[dict]:
 
 
 def indexar_reglamento():
-    """Descarga, extrae e indexa el reglamento en ChromaDB."""
+    """Descarga, extrae e indexa el reglamento estático en ChromaDB."""
     coleccion = _get_coleccion()
 
     # Si ya hay datos indexados, no repetir
     if coleccion.count() > 0:
-        logging.info(f"✅ Reglamento ya indexado ({coleccion.count()} fragmentos)")
+        logging.info(f"✅ Base vectorial ya cuenta con datos indexados ({coleccion.count()} fragmentos)")
         return
 
     logging.info("📚 Iniciando indexación del reglamento FIA 2026...")
@@ -119,7 +119,7 @@ def indexar_reglamento():
         return
 
     modelo    = _get_modelo()
-    todos     = []
+    todos = []
     for pdf in pdfs:
         fragmentos = extraer_texto(pdf)
         todos.extend(fragmentos)
@@ -135,17 +135,37 @@ def indexar_reglamento():
         lote    = todos[i:i + LOTE]
         textos  = [f["texto"] for f in lote]
         ids     = [f"doc_{i + j}" for j in range(len(lote))]
-        metas   = [{"fuente": f["fuente"], "pagina": f["pagina"]} for f in lote]
+        metas   = [{"tipo": "pdf_reglamento", "fuente": f["fuente"], "pagina": f["pagina"]} for f in lote]
         embeds  = modelo.encode(textos).tolist()
         coleccion.add(documents=textos, embeddings=embeds, ids=ids, metadatas=metas)
 
     logging.info(f"✅ Indexación completa: {len(todos)} fragmentos en ChromaDB")
 
 
-def buscar_reglamento(consulta: str, n_resultados: int = 4) -> str:
+def agregar_textos_a_chroma(textos: list[str], metadatos: list[dict], ids: list[str]):
     """
-    Busca en el reglamento indexado los fragmentos más relevantes
-    para la consulta dada. Retorna un string con el contexto.
+    🏎️ NUEVO MÉTODO DE ACTUALIZACIÓN DINÁMICA:
+    Permite inyectar bloques de texto (como noticias RSS o novedades de la semana)
+    directamente en ChromaDB de forma segura.
+    """
+    if not textos:
+        return
+        
+    coleccion = _get_coleccion()
+    modelo = _get_modelo()
+    
+    # Generamos los embeddings para las noticias frescas
+    embeds = modelo.encode(textos).tolist()
+    
+    # Insertamos los documentos en la base de datos
+    coleccion.add(documents=textos, embeddings=embeds, ids=ids, metadatas=metadatos)
+    logging.info(f"⚡ RAG Dinámico: Se sumaron {len(textos)} fragmentos de actualidad a ChromaDB.")
+
+
+def buscar_reglamento(consulta: str, n_resultados: int = 5) -> str:
+    """
+    Busca en el reglamento indexado y en las noticias de actualidad los fragmentos más relevantes.
+    Retorna un string formateado con metadatos claros para que el LLM los entienda sin ambigüedades.
     """
     coleccion = _get_coleccion()
 
@@ -166,20 +186,30 @@ def buscar_reglamento(consulta: str, n_resultados: int = 4) -> str:
         if not fragmentos:
             return ""
 
-        lineas = ["[REGLAMENTO OFICIAL FIA 2026]"]
+        lineas = ["[CONTEXTO DE CONOCIMIENTO EXTRA (REGLAMENTO Y ACTUALIDAD F1)]"]
         for texto, meta in zip(fragmentos, metadatas):
-            lineas.append(
-                f"— Fuente: {meta['fuente']} (pág. {meta['pagina']})\n{texto}"
-            )
+            tipo = meta.get("tipo", "pdf_reglamento")
+            
+            if tipo == "actualidad_f1":
+                # Si el fragmento es una noticia reciente, formateamos su metadata
+                lineas.append(
+                    f"— NOTICIA DE ACTUALIDAD RECIENTE (Fuente: {meta.get('fuente', 'RSS F1')}):\n{texto}"
+                )
+            else:
+                # Si es un fragmento clásico del PDF del reglamento
+                lineas.append(
+                    f"— REGLAMENTO FIA (Archivo: {meta.get('fuente', 'Desconocido')} - pág. {meta.get('pagina', '?')}):\n{texto}"
+                )
+                
         return "\n\n".join(lineas)
 
     except Exception as e:
-        logging.error(f"Error buscando en reglamento: {e}")
+        logging.error(f"Error buscando en base vectorial: {e}")
         return ""
 
 
 def reglamento_disponible() -> bool:
-    """Retorna True si el reglamento está indexado."""
+    """Retorna True si la base vectorial tiene datos."""
     try:
         return _get_coleccion().count() > 0
     except Exception:
