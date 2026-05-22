@@ -5,7 +5,6 @@ Docs: https://api.jolpi.ca/ergast/
 """
 
 import httpx
-import json
 from datetime import datetime, timedelta, timezone
 from src.infrastructure.f1_weather import get_circuit_weather
 
