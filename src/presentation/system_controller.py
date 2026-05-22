@@ -1,18 +1,34 @@
 # src/presentation/system_controller.py
 import os
 import logging
+import time  # 🔐 Necesario para medir el tiempo entre mensajes
 from telegram import Update
 from telegram.ext import ContextTypes
 from src.infrastructure.f1_rag import reglamento_disponible
 from src.infrastructure.db import borrar_historial, registrar_consulta
 
 class SystemController:
-    """Controlador que maneja comandos globales, interacciones de texto y mensajería de voz."""
+    """Controlador que maneja comandos globales, interacciones de texto y mensajería de voz con seguridad."""
     
     def __init__(self, tutor_use_case, quiz_use_case, audio_service):
         self.tutor_use_case = tutor_use_case
         self.quiz_use_case = quiz_use_case
         self.audio_service = audio_service
+        
+        # 🔐 Memoria volátil para el Rate Limiting (user_id: timestamp_ultimo_mensaje)
+        self._ultimas_consultas = {}
+        self._TIEMPO_MINIMO = 2.0  # Segundos mínimos entre interacciones
+
+    def _es_spammer(self, user_id: int) -> bool:
+        """🔐 Verifica si el usuario está enviando mensajes demasiado rápido."""
+        ahora = time.time()
+        ultimo_registro = self._ultimas_consultas.get(user_id, 0)
+        
+        if ahora - ultimo_registro < self._TIEMPO_MINIMO:
+            return True  # Abuso detectado
+            
+        self._ultimas_consultas[user_id] = ahora
+        return False
 
     async def cmd_start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         rag_status = "✅ Reglamento FIA indexado" if reglamento_disponible() else "⏳ Indexando reglamento..."
@@ -47,25 +63,29 @@ class SystemController:
             )
 
     async def cmd_reset(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        # 🔐 Cumplimiento de Privacidad: Eliminación total a petición del usuario
         borrar_historial(update.effective_user.id)
         await update.message.reply_text("✅ Historial borrado. ¡Volvemos a la largada!")
 
     async def manejar_mensaje(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id = update.effective_user.id
-        username = update.effective_user.username
+        username = update.effective_user.username  # 🔐 Minimización de datos (no guardamos nombres reales)
         texto = update.message.text
         
+        # 🔐 Control de abuso (Rate Limiting)
+        if self._es_spammer(user_id):
+            await update.message.reply_text("⚠️ ¡Boxes llenos! Por favor, esperá unos segundos antes de enviar otro mensaje.")
+            return
+
         await context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
         
         try:
-            # Flujo de Quiz activo
             if self.quiz_use_case.esta_jugando(user_id):
                 resultado = self.quiz_use_case.responder(user_id, texto)
                 registrar_consulta(user_id, username, texto, "quiz_respuesta")
                 await update.message.reply_text(resultado)
                 return
 
-            # Flujo del Tutor Educativo
             respuesta = await self.tutor_use_case.ejecutar_consulta(user_id, texto)
             registrar_consulta(user_id, username, texto, "consulta_general")
             
@@ -79,6 +99,12 @@ class SystemController:
     async def manejar_audio(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id = update.effective_user.id
         username = update.effective_user.username
+        
+        # 🔐 Control de abuso en audios (son procesos pesados para la API de Whisper)
+        if self._es_spammer(user_id):
+            await update.message.reply_text("⚠️ ¡Boxes llenos! Esperá unos segundos antes de mandar otro audio.")
+            return
+
         await context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
         try:
             voice = update.message.voice or update.message.audio

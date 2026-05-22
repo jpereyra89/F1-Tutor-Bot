@@ -1,5 +1,6 @@
+# .gitignore
 .env
-__pycache__/
-chroma_db/
-historial.db
 venv/
+__pycache__/
+*.db
+audio_*.ogg
