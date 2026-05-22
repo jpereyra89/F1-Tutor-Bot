@@ -181,6 +181,9 @@ F1-Tutor-Bot/
     │   ├── tutor_use_case.py    # Lógica de procesamiento de consultas del Tutor
     │   └── quiz_use_case.py     # Lógica y ciclo de juego del Quiz de F1
     │
+    ├── img/                     # Recursos visuales y multimedia estáticos del proyecto
+    │    └── f1bot_avatar.jpg    # Imagen de perfil / Avatar oficial del chatbot
+    │
     └── infrastructure/          # CAPA DE HERRAMIENTAS: Servicios externos y persistencia
         ├── db.py                # Gestión del historial de usuarios en SQLite
         ├── f1_api.py            # Cliente para la API de F1 en vivo (Jolpica)
@@ -191,9 +194,9 @@ F1-Tutor-Bot/
         ├── telegram_bot.py      # Adaptador y arranque específico de Telegram
         │
         └── reglamento_pdfs/     # Documentos oficiales de la FIA utilizados por el RAG
-            ├── sporting.pdf
-            ├── sporting_backup.pdf
-            └── technical.pdf
+            ├── sporting.pdf     # Reglamento Deportivo (reglas de carrera, penalizaciones y formato de GP)
+            ├── sporting_backup.pdf # Copia de respaldo para garantizar consistencia en la indexación
+            └── technical.pdf    # Reglamento Técnico (especificaciones del motor, chasis y aerodinámica)
 
 ```
 
