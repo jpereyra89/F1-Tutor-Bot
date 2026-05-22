@@ -220,6 +220,18 @@ F1-Tutor-Bot/
 
 ---
 
+### 🔐 Seguridad Defensiva e Integridad
+
+El sistema implementa medidas de protección avanzadas en cada una de sus capas para garantizar la estabilidad del servicio, mitigar abusos y proteger la privacidad:
+
+* **Control de Abuso y Costos (Rate Limiting):** En la capa de presentación se analiza el flujo de entrada en memoria volátil. Si un usuario envía mensajes con una frecuencia menor a 2 segundos, el bot bloquea temporalmente la petición, cuidando las cuotas de consumo de las APIs de IA (Groq/Whisper).
+* **Mitigación de Prompt Injection:** El *System Prompt* del modelo de lenguaje en el núcleo de negocio cuenta con directivas estrictas de aislamiento. Si un usuario intenta forzar al bot a salir de su rol o a revelar sus instrucciones internas, la IA esquiva el ataque de forma natural manteniendo su personalidad de tutor de F1.
+* **Inmunidad contra Inyección SQL (SQLi):** Toda la persistencia local en SQLite utiliza consultas parametrizadas mediante placeholders (`?`). Ningún dato proveniente del usuario se concatena directamente en strings de bases de datos.
+* **Concurrencia Segura y Limpieza de Temporales:** El procesamiento de notas de voz genera nombres de archivos unívocos mediante identificadores aleatorios (`uuid`), evitando colisiones por peticiones simultáneas. Además, el flujo está envuelto en bloques cerrados `try...finally`, asegurando que los archivos `.ogg` residuales se eliminen del disco local incluso ante fallas críticas del sistema.
+* **Minimización de Datos y Privacidad:** El bot cumple con el principio de recopilación mínima (solo almacena el ID numérico e identifica usuarios sin alias como "Anónimo"). El comando `/reset` ejecuta un borrado físico y definitivo de los datos a petición del usuario.
+
+---
+
 ## 🧪 Pruebas Automatizadas
 
 El proyecto cuenta con una suite de pruebas unitarias automatizadas utilizando **Pytest** para garantizar que la lógica crítica (como la conversión de horarios de la F1 a zona local) funcione de manera correcta y no sufra regresiones.
