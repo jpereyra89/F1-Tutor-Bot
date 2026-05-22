@@ -2,13 +2,14 @@
 import os
 import logging
 import time  # 🔐 Necesario para medir el tiempo entre mensajes
+import uuid  # 🔐 Necesario para generar nombres de archivos temporales unívocos
 from telegram import Update
 from telegram.ext import ContextTypes
 from src.infrastructure.f1_rag import reglamento_disponible
 from src.infrastructure.db import borrar_historial, registrar_consulta
 
 class SystemController:
-    """Controlador que maneja comandos globales, interacciones de texto y mensajería de voz con seguridad."""
+    """Controlador que maneja comandos globales, interacciones de texto y mensajería de voz con seguridad avanzada."""
     
     def __init__(self, tutor_use_case, quiz_use_case, audio_service):
         self.tutor_use_case = tutor_use_case
@@ -106,14 +107,26 @@ class SystemController:
             return
 
         await context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+        
+        # Declaramos la variable de ruta vacía para poder asegurar su borrado en el bloque 'finally'
+        path = None
         try:
             voice = update.message.voice or update.message.audio
             file = await context.bot.get_file(voice.file_id)
-            path = f"audio_{user_id}.ogg"
+            
+            # 🔐 Identificador único aleatorio de 6 caracteres para evitar colisiones entre peticiones paralelas
+            id_unico = uuid.uuid4().hex[:6]
+            path = f"audio_{user_id}_{id_unico}.ogg"
+            
             await file.download_to_drive(path)
             
             texto = await self.audio_service.transcribir_ogg(path)
-            os.remove(path)
+            
+            # 🔐 Limpieza proactiva del archivo antes de enviar la consulta al LLM
+            if os.path.exists(path):
+                os.remove(path)
+                path = None
+                
             await update.message.reply_text(f"🎙️ Escuché: _{texto}_", parse_mode="Markdown")
             
             respuesta = await self.tutor_use_case.ejecutar_consulta(user_id, texto)
@@ -121,6 +134,15 @@ class SystemController:
             
             for i in range(0, len(respuesta), 4096):
                 await update.message.reply_text(respuesta[i:i + 4096])
+                
         except Exception as e:
             logging.error(f"Error en audio: {e}")
             await update.message.reply_text("⚠️ No pude procesar el audio.")
+            
+        finally:
+            # 🔐 GANCHOS DE SEGURIDAD GARANTIZADOS: Si algo falló arriba, borramos el temporal de todas formas
+            if path and os.path.exists(path):
+                try:
+                    os.remove(path)
+                except Exception as e:
+                    logging.error(f"No se pudo limpiar el archivo residual {path}: {e}")
