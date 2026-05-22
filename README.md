@@ -165,7 +165,8 @@ F1-Tutor-Bot/
 ├── .gitignore                   # Archivos y carpetas ignorados por Git
 │
 ├── scripts/                     # Scripts utilitarios y herramientas de mantenimiento local
-│   └── ver_metricas.py          # Script para auditar consultas y analizar estadísticas
+│   ├── ver_metricas.py          # Script para auditar consultas y analizar estadísticas
+│   └── actualizar_cerebro.py    # Script de actualización dinámica del RAG mediante inyección de RSS
 │
 ├── tests/                       # Pruebas automatizadas del sistema
 │   └── test_f1_api.py           # Tests unitarios con Pytest para el conversor de horarios
@@ -175,21 +176,22 @@ F1-Tutor-Bot/
     ├── presentation/            # Controladores de interfaz de usuario
     │   ├── race_controller.py   # Despacho de estadísticas y datos en vivo
     │   ├── quiz_controller.py   # Control de comandos de la trivia
-    │   └── system_controller.py # Manejo de mensajes de texto, audios y comandos globales
+    │   └── system_controller.py # Manejo de mensajes de texto, audios con UUID y comandos globales
     │
-    ├── use_cases/               # Casos de uso con las reglas puras
+    ├── use_cases/               # Casos de uso con las reglas puras de negocio
     │   ├── tutor_use_case.py    # Lógica de procesamiento de consultas del Tutor
     │   └── quiz_use_case.py     # Lógica y ciclo de juego del Quiz de F1
     │
     ├── img/                     # Recursos visuales y multimedia estáticos del proyecto
-    │    └── f1bot_avatar.jpg    # Imagen de perfil / Avatar oficial del chatbot
+    │   └── f1bot_avatar.jpg     # Imagen de perfil / Avatar oficial del chatbot
     │
     └── infrastructure/          # CAPA DE HERRAMIENTAS: Servicios externos y persistencia
-        ├── db.py                # Gestión del historial de usuarios en SQLite
+        ├── db.py                # Gestión del historial de usuarios en SQLite (Con consultas parametrizadas)
         ├── f1_api.py            # Cliente para la API de F1 en vivo (Jolpica)
         ├── f1_weather.py        # Conexión con OpenWeather API para datos climáticos
         ├── f1_knowledge.py      # Base de conocimiento estática de F1 2026
-        ├── f1_rag.py            # Sistema RAG para el reglamento oficial de la FIA
+        ├── f1_rag.py            # Sistema RAG híbrido (Reglamento oficial FIA + Inyección dinámica de textos)
+        ├── news_service.py      # Cliente extractor de feeds RSS para capturar la actualidad de la F1 en tiempo real
         ├── audio_service.py     # Transcripción de notas de voz con Whisper (Groq)
         ├── telegram_bot.py      # Adaptador y arranque específico de Telegram
         │
