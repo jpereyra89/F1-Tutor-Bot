@@ -75,6 +75,31 @@ Desarrollado íntegramente en **Python**, sin licencias pagas.
 
 ---
 
+## 🏗️ Arquitectura del Proyecto
+
+Este bot fue diseñado siguiendo los principios de **Arquitectura Limpia (Clean Architecture)**. La estructura del código busca la separación estricta de responsabilidades, garantizando que la lógica de negocio sea completamente agnóstica a la plataforma de mensajería, la base de datos y los proveedores de Inteligencia Artificial.
+
+### 📐 Capas del Sistema
+
+El proyecto se divide en tres capas fundamentales que respetan la regla de dependencia hacia el interior:
+
+1. **Capa de Presentación (`src/presentation/`):** 
+    Contiene los controladores (`RaceController`, `QuizController`, `SystemController`) encargados de recibir los estímulos de la interfaz de usuario y formatear las respuestas. No manejan lógica de negocio ni llamadas directas a APIs de datos.
+   
+2. **Capa de Casos de Uso / Negocio (`src/use_cases/`):**
+   Es el núcleo de la aplicación. Aquí residen las reglas puras del sistema (`TutorUseCase` y `QuizUseCase`), como el procesamiento de consultas educativas o las mecánicas del juego de trivia. Esta capa es 100% reutilizable si el bot se migra a Discord, WhatsApp o una plataforma web.
+
+3. **Capa de Infraestructura (`src/infrastructure/`):**
+   Aloja las implementaciones de las herramientas y servicios externos. Esto incluye la persistencia en base de datos (`db.py`), la conexión con las APIs de F1 y clima, el motor RAG para el reglamento de la FIA, el servicio de transcripción de audio (Whisper) y el adaptador del Framework de mensajería (`telegram_bot.py`).
+
+### 🏎️ Beneficios de este Diseño
+
+* **Agnóstico a la plataforma:** Cambiar de Telegram a otra plataforma de mensajería requiere únicamente crear un nuevo adaptador en infraestructura e inyectarle los controladores existentes, sin tocar una sola línea de lógica de negocio.
+* **Flexibilidad de proveedores de IA:** Los servicios de transcripción y modelos LLM están aislados. Si se decide migrar de Groq/Whisper a OpenAI o a un modelo local (Llama 3), el impacto se reduce a un solo archivo de infraestructura.
+* **Alta Mantenibilidad:** El archivo de entrada `main.py` actúa estrictamente como un orquestador e inyector de dependencias minimalista, facilitando la escalabilidad del sistema y la creación de pruebas unitarias (`tests/`).
+
+---
+
 ## 🚀 Instalación
 
 ### Requisitos previos
@@ -135,26 +160,37 @@ La primera vez el bot va a descargar e indexar el reglamento oficial de la FIA a
 ```
 F1-Tutor-Bot/
 │
-├── main.py                 # Archivo principal — handlers y lógica del bot de Telegram
-├── requirements.txt        # Dependencias del proyecto
-├── .gitignore              # Archivos y carpetas ignorados por Git
+├── main.py                      # Punto de entrada agnóstico (orquestador del sistema)
+├── requirements.txt             # Dependencias del proyecto
+├── .gitignore                   # Archivos y carpetas ignorados por Git
 │
-├── scripts/                # Scripts utilitarios y herramientas de mantenimiento local
-│   └── ver_metricas.py     # Script para auditar consultas y analizar estadísticas
+├── scripts/                     # Scripts utilitarios y herramientas de mantenimiento local
+│   └── ver_metricas.py          # Script para auditar consultas y analizar estadísticas
 │
-├── tests/                  # Pruebas automatizadas del sistema
-│   └── test_f1_api.py      # Tests unitarios con Pytest para el conversor de horarios
+├── tests/                       # Pruebas automatizadas del sistema
+│   └── test_f1_api.py           # Tests unitarios con Pytest para el conversor de horarios
 │
-└── src/                    # Código fuente y soporte del proyecto
+└── src/                         # Código fuente y soporte del proyecto
     │
-    └── infrastructure/    # Infraestructura, servicios y base de conocimiento
-        ├── db.py           # Gestión del historial de usuarios en SQLite
-        ├── f1_api.py       # Cliente para la API de F1 en vivo (Jolpica)
-        ├── f1_weather.py   # Conexión con OpenWeather API para datos climáticos en carrera
-        ├── f1_knowledge.py # Base de conocimiento estática de F1 2026
-        ├── f1_rag.py       # Sistema RAG para el reglamento oficial de la FIA
+    ├── presentation/            # Controladores de interfaz de usuario
+    │   ├── race_controller.py   # Despacho de estadísticas y datos en vivo
+    │   ├── quiz_controller.py   # Control de comandos de la trivia
+    │   └── system_controller.py # Manejo de mensajes de texto, audios y comandos globales
+    │
+    ├── use_cases/               # Casos de uso con las reglas puras
+    │   ├── tutor_use_case.py    # Lógica de procesamiento de consultas del Tutor
+    │   └── quiz_use_case.py     # Lógica y ciclo de juego del Quiz de F1
+    │
+    └── infrastructure/          # CAPA DE HERRAMIENTAS: Servicios externos y persistencia
+        ├── db.py                # Gestión del historial de usuarios en SQLite
+        ├── f1_api.py            # Cliente para la API de F1 en vivo (Jolpica)
+        ├── f1_weather.py        # Conexión con OpenWeather API para datos climáticos
+        ├── f1_knowledge.py      # Base de conocimiento estática de F1 2026
+        ├── f1_rag.py            # Sistema RAG para el reglamento oficial de la FIA
+        ├── audio_service.py     # Transcripción de notas de voz con Whisper (Groq)
+        ├── telegram_bot.py      # Adaptador y arranque específico de Telegram
         │
-        └── reglamento_pdfs/ # Documentos oficiales de la FIA utilizados por el RAG
+        └── reglamento_pdfs/     # Documentos oficiales de la FIA utilizados por el RAG
             ├── sporting.pdf
             ├── sporting_backup.pdf
             └── technical.pdf
@@ -194,8 +230,6 @@ Para ejecutar los tests en tu entorno local, simplemente corré el siguiente com
 bash
 python -m pytest
 ```
-
----
 
 ---
 
