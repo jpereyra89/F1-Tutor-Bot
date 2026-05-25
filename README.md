@@ -264,7 +264,9 @@ python scripts/ver_metricas.py
 
 Nota: Este script utiliza pandas para procesar los datos de uso almacenados en historial.db y generar insights accionables sobre el engagement y tiempos de respuesta.
 
-⚙️ Arquitectura y Datos
+---
+
+## ⚙️ Arquitectura y Datos
 Base de Datos: El proyecto utiliza sqlite3 para la auditoría de logs y ChromaDB para el almacenamiento vectorial.
 
 Control de versiones: Por buenas prácticas, las carpetas de datos volátiles (como chroma_db/) están excluidas del control de versiones mediante .gitignore para garantizar un repositorio ligero y limpio.
