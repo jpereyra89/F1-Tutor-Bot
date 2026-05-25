@@ -1,51 +1,56 @@
-"""
-ver_metricas.py — Script para auditar y analizar el uso del chatbot
-"""
 import sqlite3
+import pandas as pd
+import os
 
 DB_PATH = "historial.db"
 
-def mostrar_ultimas_consultas(limite=20):
+def obtener_reporte_avanzado():
+    if not os.path.exists(DB_PATH):
+        print("⚠️ Base de datos no encontrada.")
+        return
+
+    # Conectar y cargar a un DataFrame (la herramienta clave del Data Scientist)
     con = sqlite3.connect(DB_PATH)
-    cursor = con.cursor()
-    
-    # 1. Traer el total de interacciones registradas
-    total = cursor.execute("SELECT COUNT(*) FROM metricas_consultas").fetchone()[0]
+    try:
+        df = pd.read_sql_query("SELECT * FROM metricas_consultas", con)
+    except Exception as e:
+        print(f"Error al leer datos: {e}")
+        return
+    finally:
+        con.close()
+
+    if df.empty:
+        print("⚠️ No hay datos para analizar aún.")
+        return
+
+    # --- MÉTRICAS DE NEGOCIO ---
     print("=" * 60)
-    print(f"📊 REPORTE DE MÉTRICAS — TOTAL DE CONSULTAS: {total}")
+    print("🚀 ANALYTICS DASHBOARD - F1 TUTOR BOT")
     print("=" * 60)
     
-    # 2. Resumen por tipo de respuesta
-    print("\n📈 USO POR CATEGORÍA:")
-    resumen = cursor.execute("""
-        SELECT tipo_respuesta, COUNT(*) 
-        FROM metricas_consultas 
-        GROUP BY tipo_respuesta
-    """).fetchall()
-    for tipo, cant in resumen:
-        print(f"   • {tipo}: {cant} mensajes")
-        
-    # 3. Mostrar las últimas preguntas de los usuarios
-    print(f"\n👀 ÚLTIMAS {limite} CONSULTAS RECIBIDAS:")
+    print(f"\n📊 TOTAL INTERACCIONES: {len(df)}")
+    print(f"👥 USUARIOS ÚNICOS: {df['username'].nunique()}")
+    
+    # Análisis de Distribución (Categorización)
+    print("\n📈 DISTRIBUCIÓN POR TIPO DE RESPUESTA:")
+    dist = df['tipo_respuesta'].value_counts(normalize=True) * 100
+    for tipo, pct in dist.items():
+        print(f"   • {tipo:15} | {pct:.1f}%")
+
+    # Si tienes una columna 'tiempo_respuesta' (latencia), esto es clave para un DS
+    if 'tiempo_respuesta' in df.columns:
+        promedio = df['tiempo_respuesta'].mean()
+        p95 = df['tiempo_respuesta'].quantile(0.95) # El percentil 95 es estándar en industria
+        print(f"\n⚡ PERFORMANCE DE IA:")
+        print(f"   • Latencia Promedio: {promedio:.2f}s")
+        print(f"   • Latencia p95 (Peor caso común): {p95:.2f}s")
+
+    # Análisis temporal rápido
+    df['fecha_hora'] = pd.to_datetime(df['fecha_hora'])
+    df['hora'] = df['fecha_hora'].dt.hour
+    hora_pico = df['hora'].mode()[0]
+    print(f"\n🕒 HORA DE MAYOR ACTIVIDAD: {hora_pico}:00 hs")
     print("-" * 60)
-    
-    consultas = cursor.execute("""
-        SELECT fecha_hora, username, mensaje_usuario, tipo_respuesta 
-        FROM metricas_consultas 
-        ORDER BY id DESC 
-        LIMIT ?
-    """, (limite,)).fetchall()
-    
-    for fecha, user, msg, tipo in consultas:
-        usuario = f"@{user}" if user else "Anónimo"
-        # Cortamos el mensaje si es muy largo para que no rompa la consola
-        msg_corto = msg[:50] + "..." if len(msg) > 50 else msg
-        print(f"[{fecha}] {usuario} ({tipo}):\n   ↳ \"{msg_corto}\"\n")
-        
-    con.close()
 
 if __name__ == "__main__":
-    try:
-        mostrar_ultimas_consultas()
-    except sqlite3.OperationalError:
-        print("⚠️ No se encontró la tabla de métricas. ¿Ya entró alguna consulta al bot?")
+    obtener_reporte_avanzado()
