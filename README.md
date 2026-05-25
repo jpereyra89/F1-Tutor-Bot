@@ -250,7 +250,8 @@ python -m pytest
 
 ---
 
-📊 Análisis de Métricas y Performance
+## 📊 Análisis de Métricas y Performance
+
 El bot incluye un módulo de auditoría que permite analizar el comportamiento de los usuarios y la performance de la IA.
 
 Cómo ejecutar el análisis:
