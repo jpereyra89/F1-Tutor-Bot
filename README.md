@@ -250,16 +250,23 @@ python -m pytest
 
 ---
 
-## 📊 Monitoreo y Métricas (Uso Local)
+📊 Análisis de Métricas y Performance
+El bot incluye un módulo de auditoría que permite analizar el comportamiento de los usuarios y la performance de la IA.
 
-El proyecto incluye un sistema de auditoría silencioso que registra las consultas de los usuarios en la base de datos local para analizar qué temas generan mayor interés.
-
-Para consultar el estado actual del bot, la cantidad de mensajes recibidos y las últimas interacciones, ejecutá el script utilitario desde la raíz del proyecto:
+Cómo ejecutar el análisis:
+Para obtener un reporte detallado (incluyendo latencia p95 y distribución de comandos), asegurate de tener pandas instalado y ejecutá:
 
 ```
-bash
+Bash
 python scripts/ver_metricas.py
 ```
+
+Nota: Este script utiliza pandas para procesar los datos de uso almacenados en historial.db y generar insights accionables sobre el engagement y tiempos de respuesta.
+
+⚙️ Arquitectura y Datos
+Base de Datos: El proyecto utiliza sqlite3 para la auditoría de logs y ChromaDB para el almacenamiento vectorial.
+
+Control de versiones: Por buenas prácticas, las carpetas de datos volátiles (como chroma_db/) están excluidas del control de versiones mediante .gitignore para garantizar un repositorio ligero y limpio.
 
 ---
 
